@@ -1,3 +1,9 @@
+Quick and dirty edit for my needs. Adds --skip-ocr command to skip OCR and all image processing, for using the file sorting functionality on files which have already been OCR'd. Also changed the text extraction to use ``pdftotext`` from ``poppler`` package, for more reliable extraction.  
+
+Probably only works on Linux, and requires ``poppler`` to be installed.
+
+Original readme follows.
+
 PyPDFOCR - Tesseract-OCR based PDF filing
 =========================================
 
