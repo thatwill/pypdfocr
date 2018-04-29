@@ -363,7 +363,7 @@ class PyPDFOCR(object):
                 logging.info("Skipping preprocess step")
                 preprocess_imagefilenames = fns
             # Run teserract
-            if not self.skip_ocr
+            if not self.skip_ocr:
                 self.ts.lang = self.lang
                 hocr_filenames = self.ts.make_hocr_from_pnms(preprocess_imagefilenames)
             
@@ -489,7 +489,11 @@ class PyPDFOCR(object):
         """
             Helper function to run the conversion, then do the optional filing, and optional emailing.
         """
-        ocr_pdffilename = self.run_conversion(pdf_filename)
+        if not self.skip_ocr:
+            ocr_pdffilename = self.run_conversion(pdf_filename)
+        else:
+            ocr_pdffilename = pdf_filename
+            
         if self.enable_filing:
             filing = self.file_converted_file(ocr_pdffilename, pdf_filename)
         else:
