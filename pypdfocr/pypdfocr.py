@@ -144,6 +144,9 @@ class PyPDFOCR(object):
         
         p.add_argument('--skip-preprocess', action='store_true',
                 default=False, dest='skip_preprocess', help='DEPRECATED: always skips now.')
+        
+        p.add_argument('--skip-ocr', action='store_true',
+                default=False, dest='skip_ocr', help='Skip tesseract ocr and move original file instead. Don\'t use with original file move option.')
 
         #---------
         # Single or watch mode
@@ -191,6 +194,11 @@ class PyPDFOCR(object):
 
         if args.preprocess:
             self.skip_preprocess = False
+            
+        if args.skip_ocr:
+            self.skip_ocr = True
+        else:
+            self.skip_ocr = False
 
         if self.debug:
             logging.basicConfig(level=logging.DEBUG, format='%(message)s')
@@ -355,12 +363,16 @@ class PyPDFOCR(object):
                 logging.info("Skipping preprocess step")
                 preprocess_imagefilenames = fns
             # Run teserract
-            self.ts.lang = self.lang
-            hocr_filenames = self.ts.make_hocr_from_pnms(preprocess_imagefilenames)
+            if not self.skip_ocr
+                self.ts.lang = self.lang
+                hocr_filenames = self.ts.make_hocr_from_pnms(preprocess_imagefilenames)
             
-            # Generate new pdf with overlayed text
-            #ocr_pdf_filename = self.pdf.overlay_hocr(tiff_dpi, hocr_filename, pdf_filename)
-            ocr_pdf_filename = self.pdf.overlay_hocr_pages(img_dpi, hocr_filenames, pdf_filename)
+                # Generate new pdf with overlayed text
+                #ocr_pdf_filename = self.pdf.overlay_hocr(tiff_dpi, hocr_filename, pdf_filename)
+                ocr_pdf_filename = self.pdf.overlay_hocr_pages(img_dpi, hocr_filenames, pdf_filename)
+            else:
+                logging.info("Skipping OCR")
+                ocr_pdf_filename = pdf_filename
 
         finally:
             # Clean up the files
