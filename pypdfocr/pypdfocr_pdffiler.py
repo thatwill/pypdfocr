@@ -63,9 +63,10 @@ class PyPdfFiler(object):
         return self.filer.file_original(original_filename)
 
     def move_to_matching_folder(self, filename):
-        for page_text in self.iter_pdf_page_text(filename):
-            tgt_folder = self._get_matching_folder(page_text)
-            if tgt_folder: break  # Stop searching through pdf pages as soon as we find a match
+        pdftotext = subprocess.Popen(['pdftotext', filename, '-'], stdout=subprocess.PIPE)
+        stdout,stderr = pdftotext.communicate()
+        text = stdout.replace('\n', ' ')
+        tgt_folder = self._get_matching_folder(text)
 
         if not tgt_folder and self.file_using_filename:
             tgt_folder = self._get_matching_folder(filename)
